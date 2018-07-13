@@ -5,6 +5,7 @@ class Message extends Component {
 
   // const link = props.read ? props.read() : props.unread()
   render() {
+
     let labels = this.props.message.labels.map((label,i)=> <span key={i} className="label label-warning">{label}</span>)
     const starred = "fa-star"
     const unstarred = "fa-star-o"
@@ -26,7 +27,7 @@ class Message extends Component {
             </div>
             <div className="col-xs-11">
               {labels}
-              <a href="">
+              <a>
                 { this.props.message.subject }
               </a>
             </div>

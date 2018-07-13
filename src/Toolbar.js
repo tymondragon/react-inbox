@@ -8,15 +8,20 @@ const Toolbar = (props) => {
           unread messages
         </p>
 
-        <button className="btn btn-default" onClick={ props.checkAll }>
-          <i className="fa fa-square-o"></i>
+        <button className="btn btn-default"
+                onClick={ props.checkAll }>
+          <i className={`fa ${ props.bulkBoxButton() }`}></i>
         </button>
 
-        <button className="btn btn-default" disabled="" onClick={ props.hasRead }>
+        <button className="btn btn-default"
+                disabled={`${props.bulkBoxButton() === "fa-square-o" ? "disabled" : ""}`}
+                onClick={ props.hasRead }>
           Mark As Read
         </button>
 
-        <button className="btn btn-default" disabled="disabled">
+        <button className="btn btn-default"
+                disabled={`${props.bulkBoxButton() === "fa-square-o" ? "disabled" : ""}`}
+                onClick={ props.unRead }>
           Mark As Unread
         </button>
 
@@ -34,7 +39,9 @@ const Toolbar = (props) => {
           <option value="gschool">gschool</option>
         </select>
 
-        <button className="btn btn-default" disabled="disabled">
+        <button className="btn btn-default"
+                disabled={`${props.bulkBoxButton() === "fa-square-o" ? "disabled" : ""}`}
+                onClick= { props.delete }>
           <i className="fa fa-trash-o"></i>
         </button>
       </div>

@@ -75,12 +75,22 @@ class App extends Component {
     this.state = { seeds: seeds }
   }
 /////refactored stuff///////
-  setMessages = () =>this.setState({seeds: this.state.seeds})
+  setMessages = () => this.setState({seeds: this.state.seeds})
   filterMessages = (x) => this.state.seeds.filter(x)
 ////////////////////////////
+  delete = () => {
+    let messages = this.filterMessages(m => !m.selected)
+    this.setState({seeds: messages})
+
+  }
+  bulkBoxButton = () => {
+    return this.state.seeds.every(m=> m.selected) ? "fa-check-square-o"
+      :  this.state.seeds.some(m=> m.selected) ? "fa-minus-square-o"
+      : "fa-square-o"
+  }
+
   checkAll = () => {
-    console.log(this.state.seeds.every(x=> x.selected))
-    this.state.seeds.every(x=> x.selected) ?
+    this.state.seeds.every(m=> m.selected) ?
     this.state.seeds.map(m => m.selected = false) :
     this.state.seeds.map(m => m.selected = true)
     this.setMessages()
@@ -91,11 +101,17 @@ class App extends Component {
     messages.map(m => m.read = true)
     this.setMessages()
   }
+  unRead = () => {
+    let messages = this.filterMessages(m => m.selected)
+    messages.map(m => m.read = false)
+    this.setMessages()
+  }
 
   isStarred = (id) => {
     let messages = this.filterMessages(m => m.id===id)[0]
     messages.starred ? messages.starred = false : messages.starred = true
     this.setMessages()
+
   }
 
   isSelected = (id) => {
@@ -108,8 +124,13 @@ class App extends Component {
     return (
       <div className="container">
         <Toolbar hasRead={ this.hasRead }
+                 unRead={ this.unRead }
                  messages={ this.state.seeds }
-                 checkAll={ this.checkAll }/>
+                 checkAll={ this.checkAll }
+                 bulkBoxButton={ this.bulkBoxButton }
+                 messages={ this.state.seeds }
+                 isSelected ={ this.isSelected }
+                 delete={ this.delete }/>
         <MessageList
                  messages={ this.state.seeds }
                  hasRead = { this.hasRead }
