@@ -121,7 +121,7 @@ class App extends Component {
 
   addLabel = (value) => {
     let messages = this.filterMessages(m => m.selected)
-    messages.map(m => { if (!m.labels.some(x => x === value)) m.labels.push(value) } )
+    messages.map(m => { if (!m.labels.some(x => x === value) && value != 'Apply label') m.labels.push(value) } )
     this.setMessages()
   }
 
