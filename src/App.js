@@ -49,7 +49,7 @@ const seeds = [
     "read": true,
     "starred": true,
     "selected": false,
-    "labels": []
+    "labels": ["gschool"]
   },
   {
     "id": 7,
@@ -74,19 +74,30 @@ class App extends Component {
     super(props)
     this.state = { seeds: seeds }
   }
+
 /////refactored stuff///////
+
   setMessages = () => this.setState({seeds: this.state.seeds})
   filterMessages = (x) => this.state.seeds.filter(x)
+
 ////////////////////////////
+
   delete = () => {
     let messages = this.filterMessages(m => !m.selected)
     this.setState({seeds: messages})
-
   }
+
+  selectToggle = () => {
+    let messages = this.filterMessages(m => m.selected)
+    return messages.length > 0 ? true:false
+  }
+
   bulkBoxButton = () => {
-    return this.state.seeds.every(m=> m.selected) ? "fa-check-square-o"
-      :  this.state.seeds.some(m=> m.selected) ? "fa-minus-square-o"
-      : "fa-square-o"
+    return (
+        this.state.seeds.every(m=> m.selected) ? "fa-check-square-o"
+        :  this.state.seeds.some(m=> m.selected) ? "fa-minus-square-o"
+        : "fa-square-o"
+      )
   }
 
   checkAll = () => {
@@ -101,23 +112,39 @@ class App extends Component {
     messages.map(m => m.read = true)
     this.setMessages()
   }
+
   unRead = () => {
     let messages = this.filterMessages(m => m.selected)
     messages.map(m => m.read = false)
     this.setMessages()
   }
 
+  addLabel = (value) => {
+    let messages = this.filterMessages(m => m.selected)
+    messages.map(m => { if (!m.labels.some(x => x === value)) m.labels.push(value) } )
+    this.setMessages()
+  }
+
+  removeLabel = (value) => {
+    let messages = this.filterMessages(m => m.selected)
+    messages.map(m => { if (m.labels.some(x => x === value)) m.labels.splice(m.labels.indexOf(value),1) } )
+    this.setMessages()
+  }
   isStarred = (id) => {
     let messages = this.filterMessages(m => m.id===id)[0]
     messages.starred ? messages.starred = false : messages.starred = true
     this.setMessages()
-
   }
 
   isSelected = (id) => {
     let message = this.filterMessages(m => m.id===id)[0]
     message.selected ? message.selected = false : message.selected = true
     this.setMessages()
+  }
+
+  count = () => {
+    let length = this.filterMessages(m => m.read===false).length
+    return length
   }
 
   render() {
@@ -128,15 +155,16 @@ class App extends Component {
                  messages={ this.state.seeds }
                  checkAll={ this.checkAll }
                  bulkBoxButton={ this.bulkBoxButton }
-                 messages={ this.state.seeds }
-                 isSelected ={ this.isSelected }
-                 delete={ this.delete }/>
+                 delete={ this.delete }
+                 selectToggle={ this.selectToggle }
+                 addLabel={ this.addLabel }
+                 removeLabel={ this.removeLabel }
+                 count={ this.count }/>
         <MessageList
                  messages={ this.state.seeds }
                  hasRead = { this.hasRead }
                  isStarred ={ this.isStarred }
-                 isSelected ={ this.isSelected }
-        />
+                 isSelected ={ this.isSelected }/>
       </div>
     )
   }
