@@ -12,17 +12,17 @@ class App extends Component {
     const response = await fetch('http://localhost:8082/api/messages')
     const json = await response.json()
     this.setState({messages: json})
-    console.log("All of the gets!", json)
   }
 
-  async apiP(id, prop, boolean, method) {
+  async api(messageIds=[], command="", value=null, label="") {
     let item = {
-      messageIds: [id],
-      command: prop,
-      [prop]: boolean
+      messageIds,
+      command,
+      label,
+      [command]: value
     }
     const response = await fetch(`http://localhost:8082/api/messages`, {
-      method: method,
+      method: 'PATCH',
       body: JSON.stringify(item),
       headers: {
         'Content-Type': 'application/json',
@@ -40,16 +40,6 @@ class App extends Component {
 
 ////////////////////////////
 
-  delete = () => {
-    let messages = this.filterMessages(m => !m.selected)
-    this.setState({messages: messages})
-  }
-
-  selectToggle = () => {
-    let messages = this.filterMessages(m => m.selected)
-    return messages.length > 0 ? true:false
-  }
-
   bulkBoxButton = () => {
     return (
         this.state.messages.every(m=> m.selected) ? "fa-check-square-o"
@@ -65,68 +55,60 @@ class App extends Component {
     this.setMessages()
   }
 
-  hasRead = () => {
-    let messages = this.filterMessages(m => m.selected)
-    messages.map(m => m.read = true)
-    this.setMessages()
-  }
-
-  unRead = () => {
-    let messages = this.filterMessages(m => m.selected)
-    messages.map(m => m.read = false)
-    this.setMessages()
-  }
-
-  addLabel = (value) => {
-    let messages = this.filterMessages(m => m.selected)
-    messages.map(m => { if (!m.labels.some(x => x === value) && value != 'Apply label') m.labels.push(value) } )
-    this.setMessages()
-  }
-
-  removeLabel = (value) => {
-    let messages = this.filterMessages(m => m.selected)
-    messages.map(m => {if (m.labels.some(x => x === value))
-      return m.labels.splice(m.labels.indexOf(value),1)
-      }
-    )
-    this.setMessages()
-  }
-  isStarred = (id) => {
-    let messages = this.filterMessages(m => m.id===id)[0]
-    let boolean = messages.starred ? messages.starred = false : messages.starred = true
-    this.apiP([id], "starred", boolean, "PATCH")
-
-  }
-
-  isSelected = (id) => {
-    let message = this.filterMessages(m => m.id===id)[0]
-    message.selected ? message.selected = false : message.selected = true
-    this.setMessages()
-  }
-
   count = () => {
     let length = this.filterMessages(m => m.read===false).length
     return length
   }
 
+//////////////////STARRED-UNSTARRED AND CHECKBOX/////////////
+  selectionClick= (id, command) => {
+    let messages = this.filterMessages(m => m.id===id)[0]
+    let bool = messages[command] ? messages[command] = false : messages[command] = true
+    this.api([id], command, bool)
+  }
+
+////////////////ADD-REMOVE LABELS//////////////////
+  label = (flag, type) => {
+    let command = type === 'Apply label' ? 'addLabel' : 'removeLabel'
+    let messages = this.filterMessages(m => m.selected)
+    let ids = messages.map(m => m.id)
+    this.api(ids, command, undefined, flag)
+  }
+
+///////////////////READ OR UNREAD////////////////////////////
+  read = (e) => {
+    let bool = e.target.id === "read" ? true : false
+    let messages = this.filterMessages(m => m.selected)
+    let id = messages.map(m => m.id)
+    this.api(id, 'read', bool )
+  }
+
+////////////DELETE MESSAGE////////////////////////////////////////
+  remove = () => {
+    let messages = this.filterMessages(m => m.selected)
+    let id = messages.map(m => m.id)
+    this.api(id, 'delete')
+  }
+
+  selectToggle = () => {
+    let messages = this.filterMessages(m => m.selected)
+    return messages.length > 0 ? true:false
+  }
+
   render() {
     return (
       <div className="container">
-        <Toolbar hasRead={ this.hasRead }
-                 unRead={ this.unRead }
+        <Toolbar read={ this.read }
                  messages={ this.state.messages }
                  checkAll={ this.checkAll }
                  bulkBoxButton={ this.bulkBoxButton }
-                 delete={ this.delete }
+                 remove={ this.remove }
                  selectToggle={ this.selectToggle }
-                 addLabel={ this.addLabel }
-                 removeLabel={ this.removeLabel }
+                 label={ this.label }
                  count={ this.count }/>
         <MessageList
                  messages={ this.state.messages }
-                 hasRead = { this.hasRead }
-                 isStarred ={ this.isStarred }
-                 isSelected ={ this.isSelected }/>
+                 selectionClick ={ this.selectionClick }/>
       </div>
     )
   }

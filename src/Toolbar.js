@@ -1,39 +1,51 @@
 import React, { Component } from 'react'
 
-const Toolbar = (props) => {
+const Toolbar = ({
+  read,
+  messages,
+  checkAll,
+  bulkBoxButton,
+  remove,
+  selectToggle,
+  label,
+  count
+}) => {
 
-  const noMessage = <div className="row toolbar">
+  return (
+     <div className="row toolbar">
       <div className="col-md-12">
         <p className="pull-right">
-          <span className="badge badge">{ props.count() }</span>
+          <span className="badge badge">{ count() }</span>
           unread messages
         </p>
 
         <button className="btn btn-default"
-                onClick={ props.checkAll }>
-          <i className={`fa ${ props.bulkBoxButton() }`}></i>
+                onClick={ checkAll }>
+          <i className={`fa ${ bulkBoxButton() }`}></i>
         </button>
 
-        <button className="btn btn-default"
-                disabled={`${props.selectToggle() ? "" : "disabled"}`}
-                onClick={ props.hasRead }>
+        <button id="read"
+                className="btn btn-default"
+                disabled={`${selectToggle() ? "" : "disabled"}`}
+                onClick={ read }>
           Mark As Read
         </button>
 
-        <button className="btn btn-default"
-                disabled={`${props.selectToggle() ? "" : "disabled"}`}
-                onClick={ props.unRead }>
+        <button id="unread"
+                className="btn btn-default"
+                disabled={`${selectToggle() ? "" : "disabled"}`}
+                onClick={ read }>
           Mark As Unread
         </button>
 
-        <select className="form-control label-select" disabled={`${props.selectToggle() ? "" : "disabled"}`} onChange={ (e)=> {props.addLabel(e.target.value)} }>
+        <select className="form-control label-select" disabled={`${selectToggle() ? "" : "disabled"}`} onChange={ (e)=> { label(e.target.value, e.target[0].value)} }>
           <option>Apply label</option>
           <option value="dev">dev</option>
           <option value="personal">personal</option>
           <option value="gschool">gschool</option>
         </select>
 
-        <select className="form-control label-select" disabled={`${props.selectToggle() ? "" : "disabled"}`} onChange={ (e)=> {props.removeLabel(e.target.value)} }>
+        <select className="form-control label-select" disabled={`${selectToggle() ? "" : "disabled"}`} onChange={ (e)=> { label(e.target.value, e.target[0].value)} }>
           <option>Remove label</option>
           <option value="dev">dev</option>
           <option value="personal">personal</option>
@@ -41,13 +53,12 @@ const Toolbar = (props) => {
         </select>
 
         <button className="btn btn-default"
-                disabled={`${props.selectToggle() ? "" : "disabled"}`}
-                onClick= { props.delete }>
+                disabled={`${selectToggle() ? "" : "disabled"}`}
+                onClick= { remove }>
           <i className="fa fa-trash-o"></i>
         </button>
       </div>
     </div>
-return noMessage
-
+  )
 }
 export default Toolbar
