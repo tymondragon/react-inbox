@@ -2,18 +2,25 @@ import React, { Component } from 'react'
 
 const Toolbar = ({
   read,
-  messages,
   checkAll,
   bulkBoxButton,
   remove,
-  selectToggle,
+  toggle,
   label,
-  count
+  count,
+  composeForm,
+  composeButton
 }) => {
 
   return (
+
      <div className="row toolbar">
       <div className="col-md-12">
+
+        <a className="btn btn-danger" onClick={ composeButton }  data-target="compose">
+          <i className="fa fa-plus"></i>
+        </a>
+
         <p className="pull-right">
           <span className="badge badge">{ count() }</span>
           unread messages
@@ -26,26 +33,26 @@ const Toolbar = ({
 
         <button id="read"
                 className="btn btn-default"
-                disabled={`${selectToggle() ? "" : "disabled"}`}
+                disabled={`${ toggle() ? "" : "disabled" }`}
                 onClick={ read }>
           Mark As Read
         </button>
 
         <button id="unread"
                 className="btn btn-default"
-                disabled={`${selectToggle() ? "" : "disabled"}`}
+                disabled={`${ toggle() ? "" : "disabled" }`}
                 onClick={ read }>
           Mark As Unread
         </button>
 
-        <select className="form-control label-select" disabled={`${selectToggle() ? "" : "disabled"}`} onChange={ (e)=> { label(e.target.value, e.target[0].value)} }>
+        <select className="form-control label-select" disabled={`${ toggle() ? "" : "disabled" }`} onChange={ (e)=> { label(e.target.value, e.target[0].value)} }>
           <option>Apply label</option>
           <option value="dev">dev</option>
           <option value="personal">personal</option>
           <option value="gschool">gschool</option>
         </select>
 
-        <select className="form-control label-select" disabled={`${selectToggle() ? "" : "disabled"}`} onChange={ (e)=> { label(e.target.value, e.target[0].value)} }>
+        <select className="form-control label-select" disabled={`${ toggle() ? "" : "disabled" }`} onChange={ (e)=> { label(e.target.value, e.target[0].value)} }>
           <option>Remove label</option>
           <option value="dev">dev</option>
           <option value="personal">personal</option>
@@ -53,7 +60,7 @@ const Toolbar = ({
         </select>
 
         <button className="btn btn-default"
-                disabled={`${selectToggle() ? "" : "disabled"}`}
+                disabled={`${ toggle() ? "" : "disabled" }`}
                 onClick= { remove }>
           <i className="fa fa-trash-o"></i>
         </button>

@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import MessageList from './MessageList'
 import Toolbar from './Toolbar'
-
+import Compose from "./Compose"
 class App extends Component {
   constructor(props) {
     super(props)
@@ -49,14 +49,12 @@ class App extends Component {
   }
 
   checkAll = () => {
-    // let bool = this.state.messages.every(m => m.selected) ? false : true
-    // let id = this.state.messages.map(m => m.id)
-    // this.api(id, 'selected', bool)
-     this.state.messages.every(x=> x.selected) ?
-     this.state.messages.map(m => m.selected = false) :
-     this.state.messages.map(m => m.selected = true)
-     this.setMessages()
+    let bool = this.state.messages.every(m => m.selected) ? false : true
+    let id = this.state.messages.filter(m => m.selected === !bool).map(m => m.id)
+    this.api(id, 'selected', bool)
   }
+  composeButton = () =>
+  this.state.show ? this.setState({show: false}) : this.setState({show: true})
 
   count = () => {
     let length = this.filterMessages(m => m.read===false).length
@@ -67,8 +65,7 @@ class App extends Component {
   selectionClick= (id, command) => {
     let messages = this.filterMessages(m => m.id===id)[0]
     let bool = messages[command] ? messages[command] = false : messages[command] = true
-    if (command === 'starred') this.api([id], command, bool)
-    else if (command === 'selected') this.setMessages()
+    this.api([id], command, bool)
   }
 
 ////////////////ADD-REMOVE LABELS//////////////////
@@ -84,7 +81,7 @@ class App extends Component {
     let bool = e.target.id === "read" ? true : false
     let messages = this.filterMessages(m => m.selected)
     let id = messages.map(m => m.id)
-    this.api(id, 'read', bool)
+    this.api(id, 'read', bool )
   }
 
 ////////////DELETE MESSAGE////////////////////////////////////////
@@ -94,22 +91,26 @@ class App extends Component {
     this.api(id, 'delete')
   }
 
-  selectToggle = () => {
+  toggle = () => {
     let messages = this.filterMessages(m => m.selected)
     return messages.length > 0 ? true:false
   }
 
   render() {
+    const composeButton = this.state.show ? <Compose compose={ this.compose }/> : ""
     return (
       <div className="container">
         <Toolbar read={ this.read }
-                 messages={ this.state.messages }
                  checkAll={ this.checkAll }
                  bulkBoxButton={ this.bulkBoxButton }
                  remove={ this.remove }
-                 selectToggle={ this.selectToggle }
+                 toggle={ this.toggle }
                  label={ this.label }
-                 count={ this.count }/>
+                 count={ this.count }
+                 composeButton={ this.composeButton }/>
+
+        {composeButton}
+
         <MessageList
                  messages={ this.state.messages }
                  selectionClick ={ this.selectionClick }/>
