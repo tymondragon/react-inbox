@@ -49,10 +49,9 @@ class App extends Component {
   }
 
   checkAll = () => {
-    this.state.messages.every(m=> m.selected) ?
-    this.state.messages.map(m => m.selected = false) :
-    this.state.messages.map(m => m.selected = true)
-    this.setMessages()
+    let bool = this.state.messages.every(m => m.selected) ? false : true
+    let id = this.state.messages.map(m => m.id)
+    this.api(id, 'selected', bool)
   }
 
   count = () => {
