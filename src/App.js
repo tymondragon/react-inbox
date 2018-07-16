@@ -49,9 +49,13 @@ class App extends Component {
   }
 
   checkAll = () => {
-    let bool = this.state.messages.every(m => m.selected) ? false : true
-    let id = this.state.messages.map(m => m.id)
-    this.api(id, 'selected', bool)
+    // let bool = this.state.messages.every(m => m.selected) ? false : true
+    // let id = this.state.messages.map(m => m.id)
+    // this.api(id, 'selected', bool)
+     this.state.messages.every(x=> x.selected) ?
+     this.state.messages.map(m => m.selected = false) :
+     this.state.messages.map(m => m.selected = true)
+     this.setMessages()
   }
 
   count = () => {
@@ -63,7 +67,8 @@ class App extends Component {
   selectionClick= (id, command) => {
     let messages = this.filterMessages(m => m.id===id)[0]
     let bool = messages[command] ? messages[command] = false : messages[command] = true
-    this.api([id], command, bool)
+    if (command === 'starred') this.api([id], command, bool)
+    else if (command === 'selected') this.setMessages()
   }
 
 ////////////////ADD-REMOVE LABELS//////////////////
@@ -79,7 +84,7 @@ class App extends Component {
     let bool = e.target.id === "read" ? true : false
     let messages = this.filterMessages(m => m.selected)
     let id = messages.map(m => m.id)
-    this.api(id, 'read', bool )
+    this.api(id, 'read', bool)
   }
 
 ////////////DELETE MESSAGE////////////////////////////////////////
