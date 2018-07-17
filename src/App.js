@@ -15,12 +15,11 @@ class App extends Component {
   }
 
   async api(messageIds=[], command="", value=null, label="") {
-    let item = {
-      messageIds,
-      command,
-      label,
-      [command]: value
-    }
+    // let item = {}
+    // if (method === "POST") {item = {...this.state.compose} }
+    // else if (method === "PATCH")
+    let item = {messageIds, command, label, [command]: value}
+    // console.log(item, "is Item")
     const response = await fetch(`http://localhost:8082/api/messages`, {
       method: 'PATCH',
       body: JSON.stringify(item),
@@ -31,6 +30,22 @@ class App extends Component {
     })
     const message = await response.json()
     this.setState({messages: message})
+    // method === "PATCH" ? this.setState({messages: message})
+    // : this.setState({messages: [...this.state.messages, message]})
+  }
+
+  async postMessage(item) {
+    const response = await fetch(`http://localhost:8082/api/messages`, {
+      method: 'POST',
+      body: JSON.stringify(item),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      }
+    })
+    const message = await response.json()
+    this.setState({messages: [...this.state.messages, message]})
+    this.composeButton()
   }
 
 /////refactored stuff///////
@@ -53,6 +68,7 @@ class App extends Component {
     let id = this.state.messages.filter(m => m.selected === !bool).map(m => m.id)
     this.api(id, 'selected', bool)
   }
+
   composeButton = () =>
   this.state.show ? this.setState({show: false}) : this.setState({show: true})
 
@@ -91,13 +107,34 @@ class App extends Component {
     this.api(id, 'delete')
   }
 
+  bodyAndSubject = (e) => {
+    let item = {
+      ...this.state.compose,
+      [e.target.id] : e.target.value
+    }
+    if (item[e.target.id]) this.setState({compose:{...item}})
+  }
+
+  sendButton = (e) => {
+    e.preventDefault()
+    let item = this.state.compose
+    console.log(item)
+    if (item !== undefined && item.hasOwnProperty('subject') && item.hasOwnProperty('body')) {
+      this.postMessage(item)
+    }
+    this.setState({compose:undefined})
+  }
+
   toggle = () => {
     let messages = this.filterMessages(m => m.selected)
     return messages.length > 0 ? true:false
   }
 
   render() {
-    const composeButton = this.state.show ? <Compose compose={ this.compose }/> : ""
+    const composeForm = this.state.show ?
+      <Compose sendButton={ this.sendButton }
+               bodyAndSubject={ this.bodyAndSubject }/> : ""
+
     return (
       <div className="container">
         <Toolbar read={ this.read }
@@ -109,7 +146,7 @@ class App extends Component {
                  count={ this.count }
                  composeButton={ this.composeButton }/>
 
-        {composeButton}
+        { composeForm }
 
         <MessageList
                  messages={ this.state.messages }
