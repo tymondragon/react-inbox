@@ -122,6 +122,7 @@ class App extends Component {
     if (item !== undefined && item.hasOwnProperty('subject') && item.hasOwnProperty('body')) {
       this.postMessage(item)
     }
+    else{ sendButton()}
     this.setState({compose:undefined})
   }
 
