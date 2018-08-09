@@ -15,11 +15,7 @@ class App extends Component {
   }
 
   async api(messageIds=[], command="", value=null, label="") {
-    // let item = {}
-    // if (method === "POST") {item = {...this.state.compose} }
-    // else if (method === "PATCH")
     let item = {messageIds, command, label, [command]: value}
-    // console.log(item, "is Item")
     const response = await fetch(`http://localhost:8082/api/messages`, {
       method: 'PATCH',
       body: JSON.stringify(item),
@@ -30,8 +26,7 @@ class App extends Component {
     })
     const message = await response.json()
     this.setState({messages: message})
-    // method === "PATCH" ? this.setState({messages: message})
-    // : this.setState({messages: [...this.state.messages, message]})
+
   }
 
   async postMessage(item) {
@@ -118,11 +113,7 @@ class App extends Component {
   sendButton = (e) => {
     e.preventDefault()
     let item = this.state.compose
-    console.log(item)
-    if (item !== undefined && item.hasOwnProperty('subject') && item.hasOwnProperty('body')) {
-      this.postMessage(item)
-    }
-    else{ sendButton()}
+    this.postMessage(item)
     this.setState({compose:undefined})
   }
 
